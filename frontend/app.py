@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 
 st.set_page_config(page_title="NOVA | Style Engine", layout="wide", page_icon="⚡")
-API_URL = "http://127.0.0.1:8000"
+API_URL = "https://nova-backend-neec.onrender.com"
 
 st.markdown("""
     <style>
