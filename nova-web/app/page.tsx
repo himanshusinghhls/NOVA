@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Home, Sliders, Camera, Star, Loader2, UploadCloud, Sun, Moon } from "lucide-react";
-import Spline from "@splinetool/react-spline";
+import dynamic from "next/dynamic";
+
+const Spline = dynamic(() => import("@splinetool/react-spline"), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full w-full text-zinc-500 font-medium">Loading 3D Engine...</div>,
+});
 
 const API_URL = "https://nova-backend-neec.onrender.com";
 
