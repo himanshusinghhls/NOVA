@@ -11,7 +11,7 @@ from deepface import DeepFace
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
 
-app = FastAPI(title="NOVA Core Engine", version="3.0")
+app = FastAPI(title="NOVA Core Engine", version="3.1")
 
 app.add_middleware(
     CORSMiddleware,
@@ -73,15 +73,20 @@ async def analyze_image(file: UploadFile = File(...)):
     results = {"age": 25, "gender": "unisex", "palette": ["#000000", "#555555", "#aaaaaa"]}
     
     try:
+        img = cv2.imread(temp_path)
+        height, width = img.shape[:2]
+        new_width = 300 
+        new_height = int((new_width / width) * height)
+        img_resized = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
+        cv2.imwrite(temp_path, img_resized)
+
         df_result = DeepFace.analyze(img_path=temp_path, actions=['age', 'gender'], enforce_detection=False, detector_backend='opencv')
         if isinstance(df_result, list): df_result = df_result[0]
         results["age"] = df_result.get("age", 25)
         results["gender"] = "male" if df_result.get("dominant_gender", "Man").lower() in ["man", "male"] else "female"
         
-        img = cv2.imread(temp_path)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (100, 100))
-        pixels = img.reshape((-1, 3))
+        img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
+        pixels = img_rgb.reshape((-1, 3))
         
         kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
         kmeans.fit(pixels)
@@ -112,8 +117,12 @@ async def rate_outfit(file: UploadFile = File(...)):
         
     try:
         img = cv2.imread(temp_path)
+        height, width = img.shape[:2]
+        new_width = 300 
+        new_height = int((new_width / width) * height)
+        img_resized = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
         
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(img_resized, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         edges = cv2.Canny(blurred, 50, 150)
         
@@ -129,9 +138,8 @@ async def rate_outfit(file: UploadFile = File(...)):
             texture_profile = "High Complexity / Heavy Patterns"
             texture_bonus = 0.2 
             
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img_small = cv2.resize(img_rgb, (50, 50))
-        kmeans = KMeans(n_clusters=2, random_state=42, n_init=10).fit(img_small.reshape((-1, 3)))
+        img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
+        kmeans = KMeans(n_clusters=2, random_state=42, n_init=10).fit(img_rgb.reshape((-1, 3)))
         centers = kmeans.cluster_centers_
         contrast = np.linalg.norm(centers[0] - centers[1])
         
