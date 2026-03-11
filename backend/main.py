@@ -73,7 +73,7 @@ async def analyze_image(file: UploadFile = File(...)):
     results = {"age": 25, "gender": "unisex", "palette": ["#000000", "#555555", "#aaaaaa"]}
     
     try:
-        df_result = DeepFace.analyze(img_path=temp_path, actions=['age', 'gender'], enforce_detection=False)
+        df_result = DeepFace.analyze(img_path=temp_path, actions=['age', 'gender'], enforce_detection=False, detector_backend='opencv')
         if isinstance(df_result, list): df_result = df_result[0]
         results["age"] = df_result.get("age", 25)
         results["gender"] = "male" if df_result.get("dominant_gender", "Man").lower() in ["man", "male"] else "female"
