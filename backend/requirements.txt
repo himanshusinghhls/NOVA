@@ -1,0 +1,8 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+pandas==2.2.1
+scikit-learn==1.4.1.post1
+deepface==0.0.84
+opencv-python-headless==4.9.0.80
+tf-keras==2.16.0
+python-multipart==0.0.9
