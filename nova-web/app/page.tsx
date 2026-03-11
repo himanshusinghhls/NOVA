@@ -3,17 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Home, Sliders, Camera, Star, Loader2, UploadCloud, Sun, Moon } from "lucide-react";
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "spline-viewer": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement>,
-        HTMLElement
-      > & { url?: string };
-    }
-  }
-}
+import Spline from "@splinetool/react-spline";
 
 const API_URL = "https://nova-backend-neec.onrender.com";
 
@@ -158,8 +148,7 @@ export default function NovaPlatform() {
             </div>
             
             <div className="h-[600px] w-full rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-2xl bg-zinc-100 dark:bg-zinc-900 relative">
-               <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
-               <spline-viewer url="https://prod.spline.design/iW5gB5h5D98B-Dcw/scene.splinecode" style={{width: '100%', height: '100%'}}></spline-viewer>
+               <Spline scene="https://prod.spline.design/iW5gB5h5D98B-Dcw/scene.splinecode" />
             </div>
           </div>
         )}
