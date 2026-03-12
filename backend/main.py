@@ -141,24 +141,37 @@ async def rate_outfit(file: UploadFile = File(...)):
         "color_harmony": 9.0, 
         "proportions": 8.0, 
         "trendiness": 8.5, 
-        "feedback": "Great color blocking and solid proportions. To elevate this further, consider adding a textured outer layer."
+        "feedback": "System fallback active. Please try again."
     }
 
     try:
         img = PIL.Image.open(path)
         img.thumbnail((500, 500))
-        vision_model = genai.GenerativeModel('gemini-1.5-flash')
+        vision_model = genai.GenerativeModel('gemini-2.5-flash')
+        
         prompt = """
         Analyze this outfit. Return ONLY a valid JSON object.
         Keys: "overall" (float 1-10), "color_harmony" (float 1-10), "proportions" (float 1-10), "trendiness" (float 1-10), "feedback" (1 sentence advice).
         """
-        response = vision_model.generate_content([prompt, img])
-        data = parse_gemini(response.text, default_rating)
-        return data
-    except Exception as e:
-        print(f"API Error Caught: {e}. USING FALLBACK DATA.")
-        return default_rating
-    finally:
+        
+        response = vision_model.generate_content(
+            [prompt, img],
+            generation_config={"response_mime_type": "application/json"}
+        )
+        data = json.loads(response.text)
+        
         if os.path.exists(path):
             os.remove(path)
             gc.collect()
+            
+        return data
+
+    except Exception as e:
+        print(f"API Error Caught: {e}")
+        default_rating["feedback"] = f"Fallback active due to error: {str(e)}"
+        
+        if os.path.exists(path):
+            os.remove(path)
+            gc.collect()
+            
+        return default_rating
