@@ -119,8 +119,8 @@ export default function FindClothes() {
               </div>
             )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {recommendations.map((item, idx) => <ProductCard key={idx} item={item} />)}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 perspective-1000">
+            {recommendations.map((item, idx) => <ProductCard key={idx} item={item} index={idx} />)}
           </div>
         </motion.div>
       )}
