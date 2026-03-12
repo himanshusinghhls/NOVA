@@ -1,16 +1,21 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 import joblib
 import os
-import cv2
-import numpy as np
 import gc
+import json
+import PIL.Image
+import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.cluster import KMeans
 
-app = FastAPI(title="Nova AI Engine")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "YOUR_API_KEY_HERE")
+genai.configure(api_key=GEMINI_API_KEY)
+
+vision_model = genai.GenerativeModel('gemini-1.5-flash')
+
+app = FastAPI(title="NOVA Core Engine")
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,7 +45,7 @@ def load_model():
 
 @app.get("/")
 def health():
-    return {"status": "NOVA backend running, memory safe mode."}
+    return {"status": "NOVA routing engine online. Gemini API active."}
 
 @app.post("/recommend")
 def recommend(profile: UserProfile):
@@ -67,16 +72,21 @@ async def analyze_image(file: UploadFile = File(...)):
         f.write(await file.read())
 
     try:
-        img = cv2.imread(path)
-        img = cv2.resize(img, (150, 150))
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        pixels = img_rgb.reshape((-1, 3))
-
-        kmeans = KMeans(n_clusters=3, n_init=5).fit(pixels)
-        colors = ['#%02x%02x%02x' % tuple(c.astype(int)) for c in kmeans.cluster_centers_]
-
-        del img, img_rgb, pixels, kmeans
-        return {"age": 25, "gender": "unisex", "palette": colors}
+        img = PIL.Image.open(path)
+        prompt = """
+        Analyze this person's style. Return ONLY a raw JSON object (no markdown, no backticks) with these exact keys:
+        "age" (integer estimate),
+        "gender" (string: "male", "female", or "unisex"),
+        "palette" (array of exactly 3 hex color codes dominant in the image)
+        """
+        response = vision_model.generate_content([prompt, img])
+        
+        raw_text = response.text.strip().replace("```json", "").replace("```", "")
+        data = json.loads(raw_text)
+        
+        return data
+    except Exception as e:
+        return {"error": f"Vision analysis failed: {str(e)}", "age": 25, "gender": "unisex", "palette": ["#000000", "#555555", "#aaaaaa"]}
     finally:
         os.remove(path)
         gc.collect()
@@ -88,16 +98,20 @@ async def rate_outfit(file: UploadFile = File(...)):
         f.write(await file.read())
 
     try:
-        img = cv2.imread(path)
-        img = cv2.resize(img, (200, 200))
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        edges = cv2.Canny(gray, 50, 150)
-
-        density = np.sum(edges > 0) / (edges.shape[0] * edges.shape[1])
-        score = round(min(6 + density * 15, 9.8), 1)
-
-        del img, gray, edges
-        return {"score": score, "feedback": "Balanced outfit geometry." if score > 7 else "Try adding more contrast or layers."}
+        img = PIL.Image.open(path)
+        prompt = """
+        Analyze this outfit. Return ONLY a raw JSON object (no markdown, no backticks) with these exact keys:
+        "score" (float out of 10.0 based on color harmony, layering, and texture),
+        "feedback" (a short, 1-sentence professional fashion critique)
+        """
+        response = vision_model.generate_content([prompt, img])
+        
+        raw_text = response.text.strip().replace("```json", "").replace("```", "")
+        data = json.loads(raw_text)
+        
+        return data
+    except Exception as e:
+        return {"error": str(e), "score": 7.0, "feedback": "Solid baseline, but consider adjusting your layers."}
     finally:
         os.remove(path)
         gc.collect()
