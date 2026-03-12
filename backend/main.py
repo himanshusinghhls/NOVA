@@ -69,8 +69,14 @@ def health():
 def recommend(profile: UserProfile):
     load_model()
     traits = profile.dict()
-    
-    user_gender = traits["gender"].lower()
+    raw_gender = str(traits.get("gender", "unisex")).strip().lower()
+    if "female" in raw_gender or "women" in raw_gender:
+        user_gender = "female"
+    elif "male" in raw_gender or "men" in raw_gender:
+        user_gender = "male"
+    else:
+        user_gender = "unisex"
+        
     filtered_df = ml_cache["data"][ml_cache["data"]["gender"].isin([user_gender, "unisex"])].copy()
     if filtered_df.empty: filtered_df = ml_cache["data"].copy()
 
@@ -117,10 +123,17 @@ async def analyze_image(file: UploadFile = File(...)):
         if key not in traits: traits[key] = default_traits[key]
     
     load_model()
-    
-    user_gender = traits.get("gender", "unisex").lower()
+    raw_gender = str(traits.get("gender", "unisex")).strip().lower()
+    if "female" in raw_gender or "women" in raw_gender:
+        user_gender = "female"
+    elif "male" in raw_gender or "men" in raw_gender:
+        user_gender = "male"
+    else:
+        user_gender = "unisex"
+        
     filtered_df = ml_cache["data"][ml_cache["data"]["gender"].isin([user_gender, "unisex"])].copy()
     if filtered_df.empty: filtered_df = ml_cache["data"].copy()
+    
     user_df = pd.DataFrame([traits])
     user_vec = ml_cache["encoder"].transform(user_df)
     dataset_vecs = ml_cache["encoder"].transform(filtered_df[["gender","age_group","occasion","skin_tone","style"]])
