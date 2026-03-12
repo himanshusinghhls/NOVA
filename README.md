@@ -57,3 +57,36 @@ Navigate to the backend directory and install the dependencies:
 ```bash
 cd backend
 pip install -r requirements.txt
+
+Setd up your environment variables:
+d
+Bash
+export GEMINI_API_KEY="your_google_ai_key_here"
+Start the FastAPI server:
+
+Bash
+uvicorn main:app --reload --port 8000
+2. Frontend Setup
+
+Navigate to the web directory and install the dependencies:
+
+Bash
+cd nova-web
+npm install
+Start the Next.js development server:
+
+Bash
+npm run dev
+Visit http://localhost:3000 to interact with the NOVA Neural Architecture.
+
+## 🧠 Data Engineering (ETL Pipeline)
+NOVA does not use dummy data. The application includes a custom data scraper (backend/ml/fetch_real_clothes.py) that hits the ASOS RapidAPI endpoint to compile a diverse dataset of real clothing items, complete with actual prices and purchase URLs.
+
+The backend utilizes On-the-Fly Vectorization: upon server boot, Pandas reads the compiled CSV, and Scikit-learn encodes the textual traits into mathematical matrices in memory, avoiding cross-platform .pkl serialization mismatches.
+
+<div align="center">
+<p>Engineered and Designed by <b>Anjali Rani</b>.</p>
+</div>
+
+
+It has been an absolute blast building this architecture and debugging this app with you. Enjoy the break, and whenever you're ready to spin up the next big feature for NOVA, just drop a message\!
