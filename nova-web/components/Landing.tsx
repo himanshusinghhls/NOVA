@@ -62,7 +62,7 @@ export default function Landing({ onStart }: { onStart: () => void }) {
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
           className="absolute left-[5%] md:left-[15%] w-40 h-56 md:w-56 md:h-80 rounded-3xl overflow-hidden border border-white/10 opacity-60 grayscale-[30%] shadow-2xl z-0"
         >
-          <img src="https://unsplash.com/photos/woman-in-white-dress-jumping-VF0dgmBSf9Q?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Streetwear Fashion" />
+          <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Streetwear Fashion" />
         </motion.div>
 
         <motion.div
@@ -71,7 +71,7 @@ export default function Landing({ onStart }: { onStart: () => void }) {
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           className="absolute right-[5%] md:right-[15%] w-40 h-56 md:w-56 md:h-80 rounded-3xl overflow-hidden border border-white/10 opacity-60 grayscale-[30%] shadow-2xl z-0"
         >
-          <img src="https://unsplash.com/photos/woman-wearing-black-floral-coat-QhR78CbFPoE?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Menswear Fashion" />
+          <img src="https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Menswear Fashion" />
         </motion.div>
 
         <motion.div
@@ -81,7 +81,7 @@ export default function Landing({ onStart }: { onStart: () => void }) {
           className="relative w-56 h-[320px] md:w-72 md:h-[400px] bg-zinc-900 border border-white/20 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden z-10 flex flex-col"
         >
           <div className="relative h-1/2 md:h-3/5 w-full">
-            <img src="https://unsplash.com/photos/woman-holding-dried-flower-K0DxxljcRv0?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-90" alt="High Fashion Model" />
+            <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-90" alt="High Fashion Model" />
             
             <motion.div
               style={{ willChange: "transform" }}
