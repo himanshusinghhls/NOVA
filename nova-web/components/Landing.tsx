@@ -5,7 +5,7 @@ import { ArrowRight, Sparkles, Terminal } from "lucide-react";
 import { triggerHaptic } from "../utils/haptics";
 import { useEffect, useState } from "react";
 
-export default function Landing({ onStart }: { onStart: () => void }) {
+const TerminalCode = () => {
   const [typedCode, setTypedCode] = useState("");
   const codeLines = [
     "> INITIALIZING NOVA ENGINE...",
@@ -26,6 +26,20 @@ export default function Landing({ onStart }: { onStart: () => void }) {
     return () => clearInterval(interval);
   }, []);
 
+  return (
+    <div className="flex-grow py-6 font-mono text-xs md:text-sm text-blue-300/80 whitespace-pre-line overflow-hidden">
+      {typedCode}
+      <motion.span 
+        animate={{ opacity: [0, 1, 0] }} 
+        transition={{ duration: 1, repeat: Infinity }}
+        className="inline-block w-2 h-4 bg-blue-400 ml-1 translate-y-1"
+      />
+    </div>
+  );
+};
+
+
+export default function Landing({ onStart }: { onStart: () => void }) {
   const handleStart = () => {
     triggerHaptic();
     onStart();
@@ -33,16 +47,19 @@ export default function Landing({ onStart }: { onStart: () => void }) {
 
   return (
     <div className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden pt-4 md:pt-12">
+      
       <div className="relative w-full max-w-md h-[350px] md:h-[400px] flex items-center justify-center mb-12 perspective-1000 pointer-events-none">
         
         <motion.div
+          style={{ willChange: "transform" }}
           animate={{ scale: [1, 1.2, 1], rotateZ: [0, 90, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="absolute w-64 h-64 md:w-80 md:h-80 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full blur-[80px] opacity-40"
         />
 
         <motion.div
-          animate={{ y: [-15, 15, -15], rotateX: [5, -5, 5], rotateY: [-5, 5, -5] }}
+          style={{ willChange: "transform", transformStyle: "preserve-3d" }}
+          animate={{ y: [-10, 10, -10], rotateX: [3, -3, 3], rotateY: [-3, 3, -3] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           className="relative w-full h-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden z-10"
         >
@@ -58,21 +75,15 @@ export default function Landing({ onStart }: { onStart: () => void }) {
             </div>
           </div>
           
-          <div className="flex-grow py-6 font-mono text-xs md:text-sm text-blue-300/80 whitespace-pre-line overflow-hidden">
-            {typedCode}
-            <motion.span 
-              animate={{ opacity: [0, 1, 0] }} 
-              transition={{ duration: 1, repeat: Infinity }}
-              className="inline-block w-2 h-4 bg-blue-400 ml-1 translate-y-1"
-            />
-          </div>
+          <TerminalCode />
 
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-50" />
 
           <motion.div
-            animate={{ top: ["0%", "100%", "0%"] }}
+            style={{ willChange: "transform" }}
+            animate={{ translateY: ["0px", "400px", "0px"] }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="absolute left-0 right-0 h-[2px] bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] z-20 pointer-events-none"
+            className="absolute left-0 right-0 top-0 h-[2px] bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] z-20 pointer-events-none"
           />
         </motion.div>
       </div>
