@@ -1,26 +1,27 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background: radial-gradient(circle at top, #09090b, #000000);
+    color: #f4f4f5;
+    min-height: 100vh;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background: radial-gradient(circle at top, #09090b, #000000);
-  color: #f4f4f5;
-  min-height: 100vh;
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
 }
 
 ::-webkit-scrollbar { width: 8px; }
