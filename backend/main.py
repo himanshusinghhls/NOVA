@@ -36,14 +36,20 @@ class UserProfile(BaseModel):
     style: str
 
 def load_model():
-    """Self-healing model loader that creates a dummy DB if yours is missing."""
+    """Self-healing model loader that trains on-the-fly from the CSV file."""
     if not ml_cache["loaded"]:
         try:
-            model_data = joblib.load(MODEL_PATH)
-            ml_cache["encoder"] = model_data["encoder"]
-            ml_cache["data"] = model_data["data"]
+            csv_path = os.path.join(BASE, "data", "fashion_dataset.csv")
+            df = pd.read_csv(csv_path)
+            encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+            encoder.fit(df[["gender", "age_group", "occasion", "skin_tone", "style"]])
+            ml_cache["encoder"] = encoder
+            ml_cache["data"] = df
             ml_cache["loaded"] = True
+            print("✅ Successfully loaded and trained real dataset from CSV!")
+            
         except Exception as e:
+            print(f"CSV Load Error: {e}. Generating fallback database.")
             fallback_data = [{
                 "gender": "unisex", "age_group": "young_adult", "occasion": "casual", "skin_tone": "medium", "style": "minimalist",
                 "item": "Essential Default Jacket", "brand": "NOVA Basics", "color": "black", "price": 89,
