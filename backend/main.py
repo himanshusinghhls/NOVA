@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
-import pickle
+import joblib
 import os
 import cv2
 import numpy as np
@@ -21,9 +21,9 @@ app.add_middleware(
 BASE = os.path.dirname(__file__)
 MODEL_PATH = os.path.join(BASE, "models", "model.pkl")
 
-model = None
 encoder = None
 data = None
+
 
 class UserProfile(BaseModel):
     gender: str
@@ -32,19 +32,22 @@ class UserProfile(BaseModel):
     skin_tone: str
     style: str
 
+
 @app.on_event("startup")
 def load_model():
-    global model, encoder, data
 
-    with open(MODEL_PATH, "rb") as f:
-        model_data = pickle.load(f)
+    global encoder, data
+
+    model_data = joblib.load(MODEL_PATH)
 
     encoder = model_data["encoder"]
     data = model_data["data"]
 
+
 @app.get("/")
 def health():
     return {"status": "NOVA backend running"}
+
 
 @app.post("/recommend")
 def recommend(profile: UserProfile):
@@ -64,6 +67,7 @@ def recommend(profile: UserProfile):
     results = data.iloc[top].to_dict("records")
 
     return {"results": results}
+
 
 @app.post("/analyze-image")
 async def analyze_image(file: UploadFile = File(...)):
@@ -93,6 +97,7 @@ async def analyze_image(file: UploadFile = File(...)):
         "gender": "male",
         "palette": colors
     }
+
 
 @app.post("/rate-outfit")
 async def rate_outfit(file: UploadFile = File(...)):

@@ -1,8 +1,9 @@
-fastapi==0.110.0
-uvicorn==0.29.0
-pandas==2.2.1
-scikit-learn==1.4.1.post1
-deepface==0.0.84
-opencv-python-headless==4.9.0.80
-tensorflow==2.15.0
-python-multipart==0.0.9
+fastapi
+uvicorn
+python-multipart
+pillow
+numpy
+pandas==2.2.2
+scikit-learn==1.4.2
+opencv-python
+joblib
