@@ -217,6 +217,6 @@ This avoids `.pkl` serialization issues across environments.
 
 <div align="center">
 
-Engineered and Designed by **Anjali Rani**
+Engineered and Designed by **Himanshu Singh**
 
 </div>
