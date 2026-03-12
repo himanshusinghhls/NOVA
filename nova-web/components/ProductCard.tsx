@@ -1,34 +1,26 @@
 export default function ProductCard({ item }: any) {
   return (
-    <div className="bg-zinc-900/60 backdrop-blur-xl p-5 rounded-3xl border border-zinc-800 shadow-2xl hover:border-blue-500/50 transition-all group flex flex-col h-full">
-      
-      <div className="relative h-64 w-full rounded-2xl overflow-hidden mb-5 bg-zinc-950">
+    <div className="bg-black/40 p-4 rounded-2xl border border-white/5 hover:border-blue-500/50 transition-colors group">
+      <div className="relative h-40 w-full rounded-xl overflow-hidden mb-4">
         <img 
           src={item.image_url} 
           alt={item.item}
-          className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100"
+          className="object-cover w-full h-full opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-500"
         />
-        <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-zinc-700">
-          <p className="font-mono font-bold text-white">${item.price}</p>
+        <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-md px-2 py-1 rounded-lg border border-white/10">
+          <p className="font-mono font-bold text-xs text-white">${item.price}</p>
         </div>
       </div>
-
-      <div className="flex-grow">
-        <h3 className="font-black text-xl text-white mb-1">{item.brand}</h3>
-        <p className="text-sm text-zinc-400 mb-6 font-medium">{item.item}</p>
-      </div>
-
-      <div className="mt-auto">
-        <a 
-          href={item.product_url} 
-          target="_blank"
-          rel="noreferrer"
-          className="w-full bg-white hover:bg-zinc-200 text-black font-black py-3.5 rounded-xl text-center transition-colors flex items-center justify-center gap-2"
-        >
-          Buy Now →
-        </a>
-      </div>
-
+      <h3 className="font-bold text-sm text-white mb-1 truncate">{item.brand}</h3>
+      <p className="text-xs text-zinc-400 mb-4 truncate">{item.item}</p>
+      <a 
+        href={item.product_url} 
+        target="_blank"
+        rel="noreferrer"
+        className="w-full bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white text-xs font-bold py-2 rounded-lg text-center transition-colors block border border-blue-500/30"
+      >
+        Buy Now
+      </a>
     </div>
   );
 }
