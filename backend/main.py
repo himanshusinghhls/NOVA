@@ -10,9 +10,8 @@ import PIL.Image
 import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "YOUR_API_KEY_HERE")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "dummy_key")
 genai.configure(api_key=GEMINI_API_KEY)
-
 vision_model = genai.GenerativeModel('gemini-1.5-flash')
 
 app = FastAPI(title="NOVA Core Engine")
@@ -38,10 +37,13 @@ class UserProfile(BaseModel):
 
 def load_model():
     if not ml_cache["loaded"]:
-        model_data = joblib.load(MODEL_PATH)
-        ml_cache["encoder"] = model_data["encoder"]
-        ml_cache["data"] = model_data["data"]
-        ml_cache["loaded"] = True
+        try:
+            model_data = joblib.load(MODEL_PATH)
+            ml_cache["encoder"] = model_data["encoder"]
+            ml_cache["data"] = model_data["data"]
+            ml_cache["loaded"] = True
+        except Exception:
+            raise HTTPException(status_code=500, detail="Database initializing...")
 
 @app.get("/")
 def health():
@@ -62,7 +64,6 @@ def recommend(profile: UserProfile):
     
     del user_df, user_vec, dataset_vecs, sim
     gc.collect()
-
     return {"results": results}
 
 @app.post("/analyze-image")
@@ -74,19 +75,16 @@ async def analyze_image(file: UploadFile = File(...)):
     try:
         img = PIL.Image.open(path)
         prompt = """
-        Analyze this person's style. Return ONLY a raw JSON object (no markdown, no backticks) with these exact keys:
+        Analyze this person's style. Return ONLY a raw JSON object with these exact keys:
         "age" (integer estimate),
         "gender" (string: "male", "female", or "unisex"),
         "palette" (array of exactly 3 hex color codes dominant in the image)
         """
         response = vision_model.generate_content([prompt, img])
-        
         raw_text = response.text.strip().replace("```json", "").replace("```", "")
-        data = json.loads(raw_text)
-        
-        return data
+        return json.loads(raw_text)
     except Exception as e:
-        return {"error": f"Vision analysis failed: {str(e)}", "age": 25, "gender": "unisex", "palette": ["#000000", "#555555", "#aaaaaa"]}
+        return {"error": str(e), "age": 25, "gender": "unisex", "palette": ["#000000", "#555555", "#aaaaaa"]}
     finally:
         os.remove(path)
         gc.collect()
@@ -100,18 +98,15 @@ async def rate_outfit(file: UploadFile = File(...)):
     try:
         img = PIL.Image.open(path)
         prompt = """
-        Analyze this outfit. Return ONLY a raw JSON object (no markdown, no backticks) with these exact keys:
+        Analyze this outfit. Return ONLY a raw JSON object with these exact keys:
         "score" (float out of 10.0 based on color harmony, layering, and texture),
         "feedback" (a short, 1-sentence professional fashion critique)
         """
         response = vision_model.generate_content([prompt, img])
-        
         raw_text = response.text.strip().replace("```json", "").replace("```", "")
-        data = json.loads(raw_text)
-        
-        return data
+        return json.loads(raw_text)
     except Exception as e:
-        return {"error": str(e), "score": 7.0, "feedback": "Solid baseline, but consider adjusting your layers."}
+        return {"error": str(e), "score": 7.0, "feedback": "Solid baseline outfit."}
     finally:
         os.remove(path)
         gc.collect()
