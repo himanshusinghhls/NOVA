@@ -1,18 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Terminal } from "lucide-react";
+import { ArrowRight, Sparkles, Scan, Palette } from "lucide-react";
 import { triggerHaptic } from "../utils/haptics";
 import { useEffect, useState } from "react";
 
-const TerminalCode = () => {
+const FashionTerminalCode = () => {
   const [typedCode, setTypedCode] = useState("");
   const codeLines = [
-    "> INITIALIZING NOVA ENGINE...",
-    "> EXTRACTING DEMOGRAPHIC VECTORS",
-    "> [skin_tone] : MATCH_FOUND",
-    "> [aesthetic] : PROCESSING...",
-    "> CURATING WARDROBE DATABASE",
+    "> SCANNING OUTFIT TOPOGRAPHY...",
+    "> EXTRACTING GARMENT VECTORS",
+    "> [color_harmony] : 94.2% (OPTIMAL)",
+    "> [style_profile] : MINIMALIST_CHIC",
+    "> LOCATING SIMILAR ITEMS IN DATABASE",
     "> READY."
   ];
 
@@ -27,17 +27,16 @@ const TerminalCode = () => {
   }, []);
 
   return (
-    <div className="flex-grow py-6 font-mono text-xs md:text-sm text-blue-300/80 whitespace-pre-line overflow-hidden">
+    <div className="py-3 font-mono text-[10px] md:text-xs text-blue-300/90 whitespace-pre-line leading-relaxed overflow-hidden drop-shadow-md">
       {typedCode}
       <motion.span 
         animate={{ opacity: [0, 1, 0] }} 
         transition={{ duration: 1, repeat: Infinity }}
-        className="inline-block w-2 h-4 bg-blue-400 ml-1 translate-y-1"
+        className="inline-block w-1.5 h-3 bg-blue-400 ml-1 translate-y-0.5"
       />
     </div>
   );
 };
-
 
 export default function Landing({ onStart }: { onStart: () => void }) {
   const handleStart = () => {
@@ -48,43 +47,70 @@ export default function Landing({ onStart }: { onStart: () => void }) {
   return (
     <div className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden pt-4 md:pt-12">
       
-      <div className="relative w-full max-w-md h-[350px] md:h-[400px] flex items-center justify-center mb-12 perspective-1000 pointer-events-none">
+      <div className="relative w-full max-w-4xl h-[400px] flex items-center justify-center mb-12 perspective-1000 pointer-events-none mt-8 md:mt-0">
         
         <motion.div
           style={{ willChange: "transform" }}
-          animate={{ scale: [1, 1.2, 1], rotateZ: [0, 90, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute w-64 h-64 md:w-80 md:h-80 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full blur-[80px] opacity-40"
+          animate={{ scale: [1, 1.1, 1], rotateZ: [0, 90, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-gradient-to-tr from-blue-600/30 to-purple-600/30 rounded-full blur-[100px]"
         />
 
         <motion.div
           style={{ willChange: "transform", transformStyle: "preserve-3d" }}
-          animate={{ y: [-10, 10, -10], rotateX: [3, -3, 3], rotateY: [-3, 3, -3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="relative w-full h-full bg-black/60 backdrop-blur-3xl border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden z-10"
+          animate={{ y: [-10, 10, -10], rotateZ: [-5, -7, -5] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute left-[5%] md:left-[15%] w-40 h-56 md:w-56 md:h-80 rounded-3xl overflow-hidden border border-white/10 opacity-60 grayscale-[30%] shadow-2xl z-0"
         >
-          <div className="flex justify-between items-center border-b border-white/10 pb-4">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/80 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-              <div className="w-3 h-3 rounded-full bg-green-500/80 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-            </div>
-            <div className="flex items-center gap-2 text-zinc-500">
-              <Terminal size={14} />
-              <span className="text-[10px] font-mono tracking-widest uppercase font-bold">Nova_Core_v2.0</span>
+          <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Streetwear Fashion" />
+        </motion.div>
+
+        <motion.div
+          style={{ willChange: "transform", transformStyle: "preserve-3d" }}
+          animate={{ y: [10, -10, 10], rotateZ: [5, 7, 5] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute right-[5%] md:right-[15%] w-40 h-56 md:w-56 md:h-80 rounded-3xl overflow-hidden border border-white/10 opacity-60 grayscale-[30%] shadow-2xl z-0"
+        >
+          <img src="https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover" alt="Menswear Fashion" />
+        </motion.div>
+
+        <motion.div
+          style={{ willChange: "transform", transformStyle: "preserve-3d" }}
+          animate={{ y: [-15, 15, -15], rotateX: [2, -2, 2] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="relative w-56 h-[320px] md:w-72 md:h-[400px] bg-zinc-900 border border-white/20 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden z-10 flex flex-col"
+        >
+          <div className="relative h-1/2 md:h-3/5 w-full">
+            <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-90" alt="High Fashion Model" />
+            
+            <motion.div
+              style={{ willChange: "transform" }}
+              animate={{ translateY: ["0px", "240px", "0px"] }} 
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 right-0 top-0 h-[2px] bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] z-20 pointer-events-none"
+            />
+            
+            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full flex items-center gap-2">
+              <Scan size={12} className="text-white" />
+              <span className="text-[9px] font-bold text-white tracking-widest uppercase">Target Locked</span>
             </div>
           </div>
-          
-          <TerminalCode />
 
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-50" />
-
-          <motion.div
-            style={{ willChange: "transform" }}
-            animate={{ translateY: ["0px", "400px", "0px"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="absolute left-0 right-0 top-0 h-[2px] bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] z-20 pointer-events-none"
-          />
+          <div className="flex-grow bg-black/80 backdrop-blur-xl p-5 flex flex-col relative overflow-hidden border-t border-white/10">
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:15px_15px] pointer-events-none" />
+            <div className="flex items-center gap-3 mb-2 z-10">
+              <div className="p-1.5 bg-white/10 rounded-lg text-white"><Palette size={14} /></div>
+              <div className="flex gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-[#E4D5C7] border border-white/20"></div>
+                <div className="w-4 h-4 rounded-full bg-[#1A1A1A] border border-white/20"></div>
+                <div className="w-4 h-4 rounded-full bg-[#8E9B90] border border-white/20"></div>
+              </div>
+            </div>
+            
+            <div className="z-10 relative">
+              <FashionTerminalCode />
+            </div>
+          </div>
         </motion.div>
       </div>
 
@@ -92,21 +118,21 @@ export default function Landing({ onStart }: { onStart: () => void }) {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="text-center z-30 flex flex-col items-center mt-4"
+        className="text-center z-30 flex flex-col items-center mt-4 px-4"
       >
         <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full text-zinc-300 text-xs font-bold uppercase tracking-widest shadow-2xl mb-6 backdrop-blur-md">
           <Sparkles size={14} className="text-blue-400 animate-pulse" />
           <span>Intelligent Styling Matrix</span>
         </div>
         
-        <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white mb-6">
+        <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white mb-6">
           The Future of <br/> 
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
             Personal Styling.
           </span>
         </h1>
         
-        <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-10 px-4">
+        <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
           Upload a photo or drop into the scanner. Our multimodal AI extracts your exact demographic vectors to curate a shoppable, hyper-personalized wardrobe.
         </p>
 
