@@ -6,11 +6,12 @@ import joblib
 import os
 import gc
 import json
+import re
 import PIL.Image
 import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "dummy_key")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "dummy")
 genai.configure(api_key=GEMINI_API_KEY)
 vision_model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -45,9 +46,15 @@ def load_model():
         except Exception:
             raise HTTPException(status_code=500, detail="Database initializing...")
 
+def clean_json(text):
+    """Removes Markdown formatting from Gemini responses to prevent JSON errors."""
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match: return match.group(0)
+    return text
+
 @app.get("/")
 def health():
-    return {"status": "NOVA routing engine online. Gemini API active."}
+    return {"status": "NOVA engine online."}
 
 @app.post("/recommend")
 def recommend(profile: UserProfile):
@@ -68,6 +75,7 @@ def recommend(profile: UserProfile):
 
 @app.post("/analyze-image")
 async def analyze_image(file: UploadFile = File(...)):
+    """FEATURE 1: Extracts traits from photo and immediately returns clothing recommendations."""
     path = f"temp_{file.filename}"
     with open(path, "wb") as f:
         f.write(await file.read())
@@ -75,22 +83,37 @@ async def analyze_image(file: UploadFile = File(...)):
     try:
         img = PIL.Image.open(path)
         prompt = """
-        Analyze this person's style. Return ONLY a raw JSON object with these exact keys:
-        "age" (integer estimate),
-        "gender" (string: "male", "female", or "unisex"),
-        "palette" (array of exactly 3 hex color codes dominant in the image)
+        Analyze this person's physical traits and current vibe. Return ONLY a valid JSON object with NO markdown.
+        You must use these exact keys and choose ONE of the allowed values for each:
+        "gender" (male, female, unisex)
+        "age_group" (teen, young_adult, adult, senior)
+        "occasion" (casual, formal, party, sport, streetwear)
+        "skin_tone" (fair, medium, dark, olive, brown)
+        "style" (minimalist, vintage, hypebeast, elegant, classic)
         """
         response = vision_model.generate_content([prompt, img])
-        raw_text = response.text.strip().replace("```json", "").replace("```", "")
-        return json.loads(raw_text)
+        traits = json.loads(clean_json(response.text))
+        
+        load_model()
+        user_df = pd.DataFrame([traits])
+        user_vec = ml_cache["encoder"].transform(user_df)
+        dataset_vecs = ml_cache["encoder"].transform(ml_cache["data"][["gender","age_group","occasion","skin_tone","style"]])
+        
+        sim = cosine_similarity(user_vec, dataset_vecs)
+        top = sim[0].argsort()[-6:][::-1]
+        recommendations = ml_cache["data"].iloc[top].to_dict("records")
+
+        return {"traits": traits, "recommendations": recommendations}
+        
     except Exception as e:
-        return {"error": str(e), "age": 25, "gender": "unisex", "palette": ["#000000", "#555555", "#aaaaaa"]}
+        return {"error": str(e)}
     finally:
         os.remove(path)
         gc.collect()
 
 @app.post("/rate-outfit")
 async def rate_outfit(file: UploadFile = File(...)):
+    """FEATURE 2: Rates the outfit on multiple specific aspects."""
     path = f"temp_fit_{file.filename}"
     with open(path,"wb") as f:
         f.write(await file.read())
@@ -98,15 +121,19 @@ async def rate_outfit(file: UploadFile = File(...)):
     try:
         img = PIL.Image.open(path)
         prompt = """
-        Analyze this outfit. Return ONLY a raw JSON object with these exact keys:
-        "score" (float out of 10.0 based on color harmony, layering, and texture),
-        "feedback" (a short, 1-sentence professional fashion critique)
+        Analyze this outfit. Return ONLY a valid JSON object with NO markdown.
+        Keys required:
+        "overall" (float 1.0 to 10.0),
+        "color_harmony" (float 1.0 to 10.0),
+        "proportions" (float 1.0 to 10.0),
+        "trendiness" (float 1.0 to 10.0),
+        "feedback" (2 sentences of professional styling advice on how to improve the fit)
         """
         response = vision_model.generate_content([prompt, img])
-        raw_text = response.text.strip().replace("```json", "").replace("```", "")
-        return json.loads(raw_text)
+        data = json.loads(clean_json(response.text))
+        return data
     except Exception as e:
-        return {"error": str(e), "score": 7.0, "feedback": "Solid baseline outfit."}
+        return {"error": str(e)}
     finally:
         os.remove(path)
         gc.collect()
