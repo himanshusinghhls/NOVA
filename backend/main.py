@@ -13,7 +13,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "dummy")
 genai.configure(api_key=GEMINI_API_KEY)
-vision_model = genai.GenerativeModel('gemini-1.5-flash')
+vision_model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
 app = FastAPI(title="NOVA Core Engine")
 
