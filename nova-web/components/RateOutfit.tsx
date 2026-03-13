@@ -44,6 +44,12 @@ export default function RateOutfit() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: { 'image/*': [] }, multiple: false });
 
+  const getOverallScore = () => {
+    if (!fitRating) return "0.0";
+    const avg = (fitRating.color_harmony + fitRating.proportions + fitRating.trendiness) / 3;
+    return avg.toFixed(1);
+  };
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-6xl mx-auto space-y-12 pb-24 relative px-4">
       
@@ -90,7 +96,7 @@ export default function RateOutfit() {
                 initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
                 className="relative h-[400px] md:h-[500px] rounded-[2.5rem] overflow-hidden border border-white/10 bg-black shadow-2xl p-2"
               >
-                <img src={previewImage} className={`w-full h-full object-cover rounded-[2rem] transition-all duration-700 ${loading ? "opacity-40 grayscale" : "opacity-100"}`} alt="Outfit Input" />
+                <img src={previewImage} className={`w-full h-full object-contain rounded-[2rem] transition-all duration-700 ${loading ? "opacity-40 grayscale" : "opacity-100"}`} alt="Outfit Input" />
                 
                 {loading && (
                   <>
@@ -121,7 +127,7 @@ export default function RateOutfit() {
                       initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 100, delay: 0.2 }}
                       className="text-7xl font-black text-white"
                     >
-                      {fitRating.overall}
+                      {getOverallScore()}
                     </motion.h3>
                     <span className="text-3xl text-zinc-600 font-bold">/10</span>
                   </div>
